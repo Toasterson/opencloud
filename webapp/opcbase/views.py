@@ -1,5 +1,4 @@
 from rest_framework import filters
-from rest_framework.decorators import detail_route
 from rest_framework.parsers import JSONParser, MultiPartParser
 from opcbase import permissions
 from opcbase.models import Realm, Machine, Instance, App
