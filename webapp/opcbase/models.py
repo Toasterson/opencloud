@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class OS(models.Model):
@@ -11,15 +12,19 @@ class OS(models.Model):
 class RealmType(models.Model):
     """
     name: Name to be displayed
-    template_path: path to template archive (ansible or similar format)
+    template: path to template archive (ansible or similar format)
     Curent Types:
         Public: Everything is open in the Internet. Shared IP Stack with the Host. No Central Login
-        Private: Apps are in an Seperate IP Range. The Host has a VPN Zone Launched by default connecting
-                the Machines with eachother on other hosts or Clients from Corporate Networks. External Acces works via
-                a Reverse Proxy.
+        Private: Apps are in a Seperate IP Range. A VLAN Tag is assigned to the Realm VXLAN later if possible.
+                External Acces works via a Reverse Proxy.
         Corporate: The Realm has complete Identity Management SetUp with Private CA and
-                    Reverse Proxy for external access
+                    Reverse Proxy for external access. Connection via VLAN or VXLAN.
     """
+    name = models.CharField(max_length=40)
+    template = models.FileField(upload_to='realm_templates')
+
+    def __str__(self):
+        return self.name
 
 
 class Realm(models.Model):
@@ -40,8 +45,8 @@ class Realm(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     creator = models.ForeignKey('auth.User', related_name='realms_owned', on_delete=models.PROTECT)
     type = models.ForeignKey('opcbase.RealmType', on_delete=models.PROTECT)
-    users = models.ManyToManyField('opcbase.Avatar', related_name='member_of_realms')
-    admins = models.ManyToManyField('opcbase.Avatar', related_name='admin_of_realms')
+    users = models.ManyToManyField('opcbase.Avatar', related_name='member_of_realms', blank=True)
+    admins = models.ManyToManyField('opcbase.Avatar', related_name='admin_of_realms', blank=True)
     REALMSTATES = (
         ('IN', 'Initializing'),
         ('WK', 'Working'),
@@ -122,6 +127,11 @@ class App(models.Model):
         choices=LANGUAGETYPES
     )
 
+    def apps_archive_path(instance, filename=None):
+        return 'apps/{0}/{1}'.format(instance.id, filename)
+
+    archive = models.FileField(upload_to=apps_archive_path)
+
     def __str__(self):
         return self.name
 
@@ -131,5 +141,5 @@ class Avatar(models.Model):
     firstname = models.CharField(max_length=255, blank=True)
     lastname = models.CharField(max_length=255, blank=True)
     loginname = models.CharField(max_length=255, blank=True)
-    #TODO Profile Related Stuff
-    #TODO Infrastructure Related fields
+    # TODO Profile Related Stuff
+    # TODO Infrastructure Related fields

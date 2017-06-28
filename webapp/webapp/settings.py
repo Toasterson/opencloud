@@ -24,7 +24,7 @@ SECRET_KEY = '3!((u1#d^zi0u(o9__mm3#_teh!wv4zdt8l2+#^8#dukafn(e5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.180.200']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -132,3 +132,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # default
     'guardian.backends.ObjectPermissionBackend',
 )
+
+MEDIA_ROOT = BASE_DIR + '/files/'
+MEDIA_URL = '/files/'

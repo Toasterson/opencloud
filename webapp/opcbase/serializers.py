@@ -33,6 +33,7 @@ class MachineSerializer(serializers.ModelSerializer):
 
 
 class InstanceSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField()
 
     class Meta:
         model = Instance
@@ -40,6 +41,7 @@ class InstanceSerializer(serializers.ModelSerializer):
 
 
 class AppSerializer(serializers.ModelSerializer):
+    maintainer = serializers.ReadOnlyField(source="maintainer.username")
 
     class Meta:
         model = App
