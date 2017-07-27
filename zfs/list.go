@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"strings"
 	"github.com/c2h5oh/datasize"
-	"strconv"
 	"errors"
 )
 
@@ -45,33 +44,9 @@ func zfsListSomeSize(dataset string, parameters ...string) (size datasize.ByteSi
 	zfs_args = append(zfs_args, dataset)
 	datasetSize, err := zfsList(zfs_args)
 	if err != nil {
-		return size, err
+		return
 	}
-	sizeText := strings.TrimSpace(datasetSize[0])
-	if strings.Contains(sizeText, "."){
-		unit := sizeText[len(sizeText)-1:]
-		sizeText = sizeText[0:len(sizeText)-1]
-		switch unit {
-		case "T":
-			unit = "G"
-		case "G":
-			unit = "M"
-		case "M":
-			unit = "K"
-		default:
-			unit = ""
-		}
-		f, ferr := strconv.ParseFloat(sizeText, 64)
-		if ferr != nil {
-			return size, ferr
-		}
-		f = f * 1024
-		sizeText = strconv.FormatFloat(f, 'f', 0, 64) + unit
-	}
-	if uerr := size.UnmarshalText([]byte(sizeText)); uerr != nil{
-		return size, uerr
-	}
-	return size, nil
+	return convertToSize(datasetSize[0])
 }
 
 func zfsList(args []string) (retVal []string, err error){
