@@ -1,13 +1,10 @@
 package zfs
 
 import (
-	"os/exec"
-	"bytes"
 	"strings"
 	"fmt"
 	"regexp"
 	"github.com/c2h5oh/datasize"
-	"errors"
 )
 
 const (
@@ -22,15 +19,15 @@ type DatasetType int32
 
 const (
 	// DatasetTypeFilesystem - file system dataset
-	DatasetTypeFilesystem DatasetType = (1 << 0)
+	DatasetTypeFilesystem DatasetType = 1 << 0
 	// DatasetTypeSnapshot - snapshot of dataset
-	DatasetTypeSnapshot = (1 << 1)
+	DatasetTypeSnapshot = 1 << 1
 	// DatasetTypeVolume - volume (virtual block device) dataset
-	DatasetTypeVolume = (1 << 2)
+	DatasetTypeVolume = 1 << 2
 	// DatasetTypePool - pool dataset
-	DatasetTypePool = (1 << 3)
+	DatasetTypePool = 1 << 3
 	// DatasetTypeBookmark - bookmark dataset
-	DatasetTypeBookmark = (1 << 4)
+	DatasetTypeBookmark = 1 << 4
 )
 
 // Dataset - ZFS dataset object
@@ -41,38 +38,9 @@ type Dataset struct {
 	Children   []Dataset
 }
 
-func zfsExec(args []string) (retVal []string, err error){
-	cmd := exec.Command("zfs", args...)
-	var out, serr bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &serr
-
-	if err = cmd.Run(); err != nil{
-		return []string{}, errors.New(strings.TrimSpace(string(serr.Bytes())))
-	}
-	if out.Len() > 0 {
-		retVal = strings.Split(string(out.Bytes()), "\n")
-		retVal = retVal[1:]
-		//Do some trimming as there could be a empty line in there
-		for i, val := range(retVal){
-			val = strings.TrimSpace(val)
-			if val == ""{
-				retVal = append(retVal[:i], retVal[i+1:]...)
-			}
-		}
-	}
-	return
-}
-
-func datasetPropertyListToCMD (props map[string]string) (retVal []string) {
-	for key, prop := range props{
-		retVal = append(retVal, "-o", fmt.Sprintf("%s=%s", key, prop))
-	}
-	return
-}
-
 //Read a Dataset and all its Properties from zfs Command
 func OpenDataset(path string) (d Dataset){
+	//TODO switch to use -Hp as this does not print first line
 	retVal, err := zfsExec([]string{"get", "all", path})
 	if err != nil {
 		return
@@ -117,21 +85,6 @@ func OpenDataset(path string) (d Dataset){
 	return
 }
 
-
-// DatasetCreate create a new filesystem or volume on path representing
-// pool/dataset or pool/parent/dataset
-func DatasetCreate(path string, dtype DatasetType, props map[string]string) (d Dataset, err error) {
-	args := []string{"create"}
-	args = append(args, datasetPropertyListToCMD(props)...)
-	args = append(args, path)
-	if _, err = zfsExec(args); err != nil{
-		return
-	}
-	d = OpenDataset(path)
-	return
-}
-
-
 // SetProperty set ZFS dataset property to value. Not all properties can be set,
 // some can be set only at creation time and some are read only.
 // Always check if returned error and its description.
@@ -150,6 +103,7 @@ func (d *Dataset) GetProperty(p string) (prop Property, err error) {
 	if retVal, err = zfsExec([]string{"get", p, d.Path}); err != nil {
 		return
 	}
+	//TODO switch to use -Hp as this does not print first line
 	propLine := strings.Fields(retVal[0])
 	prop.Value = propLine[1]
 	prop.Source = propLine[2]

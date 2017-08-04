@@ -9,9 +9,18 @@ import (
 	"os/signal"
 	"syscall"
 	"github.com/takama/daemon"
+	"errors"
 )
 
 var Stdlog, Errlog *log.Logger
+
+func NotSupportedError(functionality string) error {
+	return errors.New(fmt.Sprintf("Functionality %s is currently not Supported", functionality))
+}
+
+func InvalidConfiguration(section string) error {
+	return errors.New(fmt.Sprintf("Invalid Configuration %s is not correct please fix", section))
+}
 
 type Server struct {
 	daemon.Daemon

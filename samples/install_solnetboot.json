@@ -1,0 +1,14 @@
+{
+  "install_type": "efifulldisk",
+  "root_fs_type": "zfs",
+  "disks": ["c1t1d0"],
+  "media_type": "solnetboot",
+  "media_url": "http://192.168.120.254/tmp",
+  "rpool_name": "rpool",
+  "zfs_layout": {
+    "/var": "rpool/shared/var",
+    "/export": "rpool/export",
+    "/export/home": "rpool/export/home"
+  },
+  "pool_type": "normal"
+}

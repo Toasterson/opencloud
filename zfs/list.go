@@ -30,6 +30,7 @@ func UsedIncludingChildren(dataset string) (size datasize.ByteSize, err error){
 }
 
 func zfsListSomeSize(dataset string, parameters ...string) (size datasize.ByteSize, err error){
+	//TODO switch to use -Hp as this does not print first line
 	if dataset == "" {
 		return size, errors.New("Dataset is not allowed to be empty.")
 	}
@@ -58,7 +59,7 @@ func zfsList(args []string) (retVal []string, err error){
 	if err = cmd.Run(); err != nil{
 		return retVal, err
 	}
-	retVal = strings.Split(string(out.Bytes()), "\n")
+	retVal = strings.Split(out.String(), "\n")
 	retVal = retVal[1:]
 	//Do some trimming as there could be a empty line in there
 	for i, val := range(retVal){

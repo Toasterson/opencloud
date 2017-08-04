@@ -4,6 +4,10 @@ import (
 	"github.com/c2h5oh/datasize"
 	"strings"
 	"strconv"
+	"fmt"
+	"os/exec"
+	"bytes"
+	"errors"
 )
 
 // VDevType type of device in the pool
@@ -364,6 +368,38 @@ func convertToSize(s string) (size datasize.ByteSize, err error) {
 	}
 	if err = size.UnmarshalText([]byte(sizeText)); err != nil{
 		return
+	}
+	return
+}
+
+func DatasetPropertyListToCMD(props map[string]string) (retVal []string) {
+	for key, prop := range props{
+		retVal = append(retVal, "-o", fmt.Sprintf("%s=%s", key, prop))
+	}
+	return
+}
+
+
+
+func zfsExec(args []string) (retVal []string, err error){
+	cmd := exec.Command("zfs", args...)
+	var out, serr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &serr
+
+	if err = cmd.Run(); err != nil{
+		return []string{}, errors.New(strings.TrimSpace(serr.String()))
+	}
+	if out.Len() > 0 {
+		retVal = strings.Split(out.String(), "\n")
+		retVal = retVal[1:]
+		//Do some trimming as there could be a empty line in there
+		for i, val := range retVal {
+			val = strings.TrimSpace(val)
+			if val == ""{
+				retVal = append(retVal[:i], retVal[i+1:]...)
+			}
+		}
 	}
 	return
 }
