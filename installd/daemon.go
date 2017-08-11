@@ -15,7 +15,7 @@ func HTTPDownload(url string, location string) (err error) {
 	req, _ := grab.NewRequest(location, url)
 
 	// start download
-	logger.Info(fmt.Sprintf("Downloading %v...\n", req.URL()))
+	logger.Info(fmt.Sprintf("Downloading %v...", req.URL()))
 	resp := client.Do(req)
 
 	// start UI loop
@@ -26,7 +26,7 @@ ProgressLoop:
 	for {
 		select {
 		case <-t.C:
-			logger.Info(fmt.Sprintf("  transferred %v / %v bytes (%.2f%%)\n",
+			logger.Info(fmt.Sprintf("  transferred %v / %v bytes (%.2f%%)",
 				resp.BytesComplete(),
 				resp.Size,
 				100*resp.Progress()))
@@ -39,10 +39,10 @@ ProgressLoop:
 
 	// check for errors
 	if err := resp.Err(); err != nil {
-		logger.Critical(fmt.Sprintf("Download failed: %v\n", err))
-		return
+		logger.Critical(fmt.Sprintf("Download failed: %v", err))
+		return err
 	}
 
-	logger.Info(fmt.Sprintf("Download saved to %v \n", resp.Filename))
+	logger.Info(fmt.Sprintf("Download saved to %v", resp.Filename))
 	return
 }

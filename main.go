@@ -4,10 +4,10 @@ import (
 	"flag"
 	"github.com/toasterson/opencloud/devprop"
 	"github.com/toasterson/opencloud/installd"
-	"os"
 	"encoding/json"
 	"github.com/toasterson/mozaik/util"
 	"github.com/toasterson/mozaik/logger"
+	"io/ioutil"
 )
 
 func main() {
@@ -28,13 +28,10 @@ func main() {
 		}
 	}
 	*/
-	conf, err := os.OpenFile(*confFile, os.O_RDONLY, 0444)
-	defer conf.Close()
+	file, err := ioutil.ReadFile(*confFile)
 	util.Must(err)
-	var buffer []byte
-	conf.Read(buffer)
 	var confObj installd.InstallConfiguration
-	util.Must(json.Unmarshal(buffer, &confObj))
+	util.Must(json.Unmarshal(file, &confObj))
 	if confObj.MediaURL == ""{
 		confObj.MediaURL, err = devprop.GetValue("install_media")
 		util.Must(err)

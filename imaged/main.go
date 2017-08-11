@@ -1,5 +1,5 @@
 package imaged
-
+/*
 import (
 	"github.com/takama/daemon"
 	"os"
@@ -13,11 +13,13 @@ func main() {
 		common.Errlog.Println("Error: ", err)
 		os.Exit(1)
 	}
-	service := common.Server{srv, port, name, description}
-	status, err := common.RunService(service, client)
+	service := Server{srv, port, name, description}
+	status, err := RunService(service, client)
 	if err != nil {
 		common.Errlog.Println(status, "\nError: ", err)
 		os.Exit(1)
 	}
 	fmt.Println(status)
 }
+
+*/

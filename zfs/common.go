@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"bytes"
 	"errors"
+	"github.com/toasterson/mozaik/logger"
 )
 
 // VDevType type of device in the pool
@@ -386,7 +387,7 @@ func zfsExec(args []string) (retVal []string, err error){
 	var out, serr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &serr
-
+	logger.Trace(cmd.Path, cmd.Args)
 	if err = cmd.Run(); err != nil{
 		return []string{}, errors.New(strings.TrimSpace(serr.String()))
 	}

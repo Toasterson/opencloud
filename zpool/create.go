@@ -1,6 +1,10 @@
 package zpool
 
-import "github.com/toasterson/opencloud/zfs"
+import (
+	"github.com/toasterson/opencloud/zfs"
+	"runtime"
+	"fmt"
+)
 
 // Create a new Zfs Pool on the Followin disks with mode
 func CreatePool(name string, props map[string]string, force bool, poolType string, drives []string, createOnly bool) (p Pool, err error) {
@@ -10,10 +14,12 @@ func CreatePool(name string, props map[string]string, force bool, poolType strin
 	}
 	args = append(args, zfs.DatasetPropertyListToCMD(props)...)
 	args = append(args, name)
-	if poolType != ""{
+	if poolType != "normal" && poolType != ""{
 		args = append(args, poolType)
 	}
-	args = append(args, drives...)
+	for _,drive := range drives {
+		args = append(args, fmt.Sprintf("%s/%s", drivePath(), drive))
+	}
 	if _, err = zpoolExec(args); err != nil{
 		return
 	}
@@ -21,4 +27,16 @@ func CreatePool(name string, props map[string]string, force bool, poolType strin
 		p = OpenPool(name)
 	}
 	return
+}
+
+func drivePath() string{
+	switch runtime.GOOS {
+	case "linux":
+		return "/dev"
+	case "solaris":
+		return "/dev/dsk"
+	default:
+		panic("Not Supported Os")
+	}
+	return ""
 }
