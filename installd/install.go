@@ -23,7 +23,7 @@ const solmediarootfileName string = "boot_archive"
 
 func Install(conf InstallConfiguration) {
 	//TODO Switch to switch statement
-	if conf.InstallType == "fulldisk"{
+	if conf.InstallType == "fulldisk" {
 		util.Must(formatDrives(&conf))
 	}
 	util.Must(CreateAndMountZpool(&conf))
@@ -43,7 +43,7 @@ func formatDrives(conf *InstallConfiguration) (err error) {
 	return
 }
 
-func CreateAndMountZpool(conf *InstallConfiguration) (err error){
+func CreateAndMountZpool(conf *InstallConfiguration) (err error) {
 	_, err = zpool.CreatePool(conf.RPoolName, conf.PoolArgs, true, conf.PoolType, conf.Disks, true)
 	if err != nil {
 		return
@@ -85,17 +85,17 @@ func CreateDatasets(conf *InstallConfiguration) {
 		conf.BEName = "openindiana"
 	}
 	var err error
-	if conf.InstallType != "bootenv"{
-		_, err = zfs.CreateDataset(fmt.Sprintf("%s/ROOT", conf.RPoolName), zfs.DatasetTypeFilesystem, map[string]string{"mountpoint":"legacy"},true)
+	if conf.InstallType != "bootenv" {
+		_, err = zfs.CreateDataset(fmt.Sprintf("%s/ROOT", conf.RPoolName), zfs.DatasetTypeFilesystem, map[string]string{"mountpoint": "legacy"}, true)
 		util.Must(err)
-		_, err = zfs.CreateDataset(fmt.Sprintf("%s/swap", conf.RPoolName), zfs.DatasetTypeVolume, map[string]string{"blocksize":"4k", "size": conf.SwapSize},true)
+		_, err = zfs.CreateDataset(fmt.Sprintf("%s/swap", conf.RPoolName), zfs.DatasetTypeVolume, map[string]string{"blocksize": "4k", "size": conf.SwapSize}, true)
 		util.Must(err)
-		_, err = zfs.CreateDataset(fmt.Sprintf("%s/dump", conf.RPoolName), zfs.DatasetTypeVolume, map[string]string{"size": conf.DumpSize},true)
+		_, err = zfs.CreateDataset(fmt.Sprintf("%s/dump", conf.RPoolName), zfs.DatasetTypeVolume, map[string]string{"size": conf.DumpSize}, true)
 		util.Must(err)
 		//TODO Zfs Layout Creation
 	}
 	if conf.MediaType != MediaTypeZImage {
-		bootenv, err := zfs.CreateDataset(fmt.Sprintf("%s/ROOT/%s", conf.RPoolName, conf.BEName), zfs.DatasetTypeFilesystem, map[string]string{"mountpoint": altRootLocation},true)
+		bootenv, err := zfs.CreateDataset(fmt.Sprintf("%s/ROOT/%s", conf.RPoolName, conf.BEName), zfs.DatasetTypeFilesystem, map[string]string{"mountpoint": altRootLocation}, true)
 		u1 := uuid.NewV4()
 		bootenv.SetProperty("org.opensolaris.libbe:uuid", u1.String())
 		util.Must(err)
@@ -104,7 +104,7 @@ func CreateDatasets(conf *InstallConfiguration) {
 	err = rpool.SetProperty("bootfs", fmt.Sprintf("%s/ROOT/%s", conf.RPoolName, conf.BEName))
 }
 
-func getMediaFiles(conf *InstallConfiguration){
+func getMediaFiles(conf *InstallConfiguration) {
 	util.Must(HTTPDownload(fmt.Sprintf("%s/%s", conf.MediaURL, solusrfileName), "/tmp"))
 	//TODO different locations on i86 and amd64
 	util.Must(HTTPDownload(fmt.Sprintf("%s/platform/i86pc/%s", conf.MediaURL, solmediarootfileName), "/tmp"))
@@ -127,7 +127,7 @@ func installOSFromMediaFiles(saveLocation string) {
 		"opt",
 		"zonelib",
 	}
-	for _, dir := range filelist{
+	for _, dir := range filelist {
 		filepath.Walk(fmt.Sprintf("%s/%s", altMountLocation, dir), walkCopy)
 	}
 }
@@ -140,14 +140,14 @@ func walkCopy(path string, info os.FileInfo, err error) error {
 		return nil
 	}
 	util.Must(err)
-	if info.IsDir(){
+	if info.IsDir() {
 		logger.Trace(fmt.Sprintf("Mkdir %s", dstpath))
 		util.Must(os.Mkdir(dstpath, info.Mode()))
-	} else if lsrcinfo.Mode() & os.ModeSymlink != 0 {
-			//We have a Symlink thus Create it on the Target
-			dstTarget, _ := os.Readlink(path)
-			logger.Trace(fmt.Sprintf("Creating Symlink %s -> %s", dstpath, dstTarget))
-			util.Must(os.Symlink(dstTarget, dstpath))
+	} else if lsrcinfo.Mode()&os.ModeSymlink != 0 {
+		//We have a Symlink thus Create it on the Target
+		dstTarget, _ := os.Readlink(path)
+		logger.Trace(fmt.Sprintf("Creating Symlink %s -> %s", dstpath, dstTarget))
+		util.Must(os.Symlink(dstTarget, dstpath))
 	} else {
 		//We Have a regular File Copy it
 		go copyFileExact(path, info, dstpath)
@@ -155,7 +155,7 @@ func walkCopy(path string, info os.FileInfo, err error) error {
 	return nil
 }
 
-func copyFileExact(source string, srcInfo os.FileInfo, dest string){
+func copyFileExact(source string, srcInfo os.FileInfo, dest string) {
 	//logger.Trace(fmt.Sprintf("Copy %s -> %s", path, dest))
 	src, err := os.Open(source)
 	defer src.Close()
@@ -171,6 +171,7 @@ func copyFileExact(source string, srcInfo os.FileInfo, dest string){
 	util.Must(syscall.Chown(dest, int(srcStat.Uid), int(srcStat.Gid)))
 	//util.Must(os.Chtimes(dest, time.Unix(int64(srcStat.Atim.Sec),int64(srcStat.Atim.Nsec)), time.Unix(int64(srcStat.Mtim.Sec),int64(srcStat.Mtim.Nsec))))
 }
+
 /*
 func MakeSystemDirectories(conf *InstallConfiguration){
 	dirList := []string{

@@ -29,7 +29,6 @@ const (
 	VDevTypeL2cache            = "l2cache"   // VDevTypeL2cache cache device (disk)
 )
 
-
 // PoolStatus type representing status of the pool
 type PoolStatus int
 
@@ -76,27 +75,27 @@ const (
 	 * pool has unsupported features but cannot be opened at all, its
 	 * status is ZPOOL_STATUS_UNSUP_FEAT_READ.
 	 */
-	PoolStatusUnsupFeatRead  /* unsupported features for read */
-	PoolStatusUnsupFeatWrite /* unsupported features for write */
+	PoolStatusUnsupFeatRead   /* unsupported features for read */
+	PoolStatusUnsupFeatWrite  /* unsupported features for write */
 
 	/*
 	 * These faults have no corresponding message ID.  At the time we are
 	 * checking the status, the original reason for the FMA fault (I/O or
 	 * checksum errors) has been lost.
 	 */
-	PoolStatusFaultedDevR  /* faulted device with replicas */
-	PoolStatusFaultedDevNr /* faulted device with no replicas */
+	PoolStatusFaultedDevR   /* faulted device with replicas */
+	PoolStatusFaultedDevNr  /* faulted device with no replicas */
 
 	/*
 	 * The following are not faults per se, but still an error possibly
 	 * requiring administrative attention.  There is no corresponding
 	 * message ID.
 	 */
-	PoolStatusVersionOlder /* older legacy on-disk version */
-	PoolStatusFeatDisabled /* supported features are disabled */
-	PoolStatusResilvering  /* device being resilvered */
-	PoolStatusOfflineDev   /* device online */
-	PoolStatusRemovedDev   /* removed device */
+	PoolStatusVersionOlder  /* older legacy on-disk version */
+	PoolStatusFeatDisabled  /* supported features are disabled */
+	PoolStatusResilvering   /* device being resilvered */
+	PoolStatusOfflineDev    /* device online */
+	PoolStatusRemovedDev    /* removed device */
 
 	/*
 	 * Finally, the following indicates a healthy pool.
@@ -119,7 +118,7 @@ const (
 // Pool properties. Enumerates available ZFS pool properties. Use it to access
 // pool properties either to read or set soecific property.
 const (
-	PoolPropName int = iota
+	PoolPropName         int = iota
 	PoolPropSize
 	PoolPropCapacity
 	PoolPropAltroot
@@ -156,7 +155,7 @@ const (
  * the property table in module/zcommon/zfs_prop.c.
  */
 const (
-	DatasetPropType int = iota
+	DatasetPropType               int = iota
 	DatasetPropCreation
 	DatasetPropUsed
 	DatasetPropAvailable
@@ -180,14 +179,14 @@ const (
 	DatasetPropReadonly
 	DatasetPropZoned
 	DatasetPropSnapdir
-	DatasetPropPrivate /* not exposed to user, temporary */
+	DatasetPropPrivate             /* not exposed to user, temporary */
 	DatasetPropAclinherit
-	DatasetPropCreatetxg /* not exposed to the user */
-	DatasetPropName      /* not exposed to the user */
+	DatasetPropCreatetxg           /* not exposed to the user */
+	DatasetPropName                /* not exposed to the user */
 	DatasetPropCanmount
-	DatasetPropIscsioptions /* not exposed to the user */
+	DatasetPropIscsioptions        /* not exposed to the user */
 	DatasetPropXattr
-	DatasetPropNumclones /* not exposed to the user */
+	DatasetPropNumclones           /* not exposed to the user */
 	DatasetPropCopies
 	DatasetPropVersion
 	DatasetPropUtf8only
@@ -205,13 +204,13 @@ const (
 	DatasetPropUsedds
 	DatasetPropUsedchild
 	DatasetPropUsedrefreserv
-	DatasetPropUseraccounting /* not exposed to the user */
-	DatasetPropStmfShareinfo  /* not exposed to the user */
+	DatasetPropUseraccounting      /* not exposed to the user */
+	DatasetPropStmfShareinfo       /* not exposed to the user */
 	DatasetPropDeferDestroy
 	DatasetPropUserrefs
 	DatasetPropLogbias
-	DatasetPropUnique   /* not exposed to the user */
-	DatasetPropObjsetid /* not exposed to the user */
+	DatasetPropUnique              /* not exposed to the user */
+	DatasetPropObjsetid            /* not exposed to the user */
 	DatasetPropDedup
 	DatasetPropMlslabel
 	DatasetPropSync
@@ -220,7 +219,7 @@ const (
 	DatasetPropClones
 	DatasetPropLogicalused
 	DatasetPropLogicalreferenced
-	DatasetPropInconsistent /* not exposed to the user */
+	DatasetPropInconsistent        /* not exposed to the user */
 	DatasetPropSnapdev
 	DatasetPropAcltype
 	DatasetPropSelinuxContext
@@ -343,11 +342,10 @@ const (
 	VDevAuxSplitPool                   // vdev was split off into another pool
 )
 
-
 //Nice Helper Function to convert Text into a nice Human Readable and Calculateable Value
 func convertToSize(s string) (size datasize.ByteSize, err error) {
 	sizeText := strings.TrimSpace(s)
-	if strings.Contains(sizeText, "."){
+	if strings.Contains(sizeText, ".") {
 		unit := sizeText[len(sizeText)-1:]
 		sizeText = sizeText[0:len(sizeText)-1]
 		switch unit {
@@ -367,28 +365,26 @@ func convertToSize(s string) (size datasize.ByteSize, err error) {
 		f = f * 1024
 		sizeText = strconv.FormatFloat(f, 'f', 0, 64) + unit
 	}
-	if err = size.UnmarshalText([]byte(sizeText)); err != nil{
+	if err = size.UnmarshalText([]byte(sizeText)); err != nil {
 		return
 	}
 	return
 }
 
 func DatasetPropertyListToCMD(props map[string]string) (retVal []string) {
-	for key, prop := range props{
+	for key, prop := range props {
 		retVal = append(retVal, "-o", fmt.Sprintf("%s=%s", key, prop))
 	}
 	return
 }
 
-
-
-func zfsExec(args []string) (retVal []string, err error){
+func zfsExec(args []string) (retVal []string, err error) {
 	cmd := exec.Command("zfs", args...)
 	var out, serr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &serr
 	logger.Trace(cmd.Path, cmd.Args)
-	if err = cmd.Run(); err != nil{
+	if err = cmd.Run(); err != nil {
 		return []string{}, errors.New(strings.TrimSpace(serr.String()))
 	}
 	if out.Len() > 0 {
@@ -397,7 +393,7 @@ func zfsExec(args []string) (retVal []string, err error){
 		//Do some trimming as there could be a empty line in there
 		for i, val := range retVal {
 			val = strings.TrimSpace(val)
-			if val == ""{
+			if val == "" {
 				retVal = append(retVal[:i], retVal[i+1:]...)
 			}
 		}

@@ -32,14 +32,14 @@ const (
 
 // Dataset - ZFS dataset object
 type Dataset struct {
-	Path 	   string
+	Path       string
 	Type       DatasetType
 	Properties DatasetProperties
 	Children   []Dataset
 }
 
 //Read a Dataset and all its Properties from zfs Command
-func OpenDataset(path string) (d Dataset){
+func OpenDataset(path string) (d Dataset) {
 	//TODO switch to use -Hp as this does not print first line
 	retVal, err := zfsExec([]string{"get", "all", path})
 	if err != nil {
@@ -47,10 +47,10 @@ func OpenDataset(path string) (d Dataset){
 	}
 	d.Path = path
 	d.Properties = make(DatasetProperties)
-	for _, line := range retVal{
+	for _, line := range retVal {
 		propLine := strings.Fields(line)
 		propName := propLine[1]
-		if propName == "type"{
+		if propName == "type" {
 			switch propLine[2] {
 			case "filesystem":
 				d.Type = DatasetTypeFilesystem
@@ -71,13 +71,13 @@ func OpenDataset(path string) (d Dataset){
 	if err != nil {
 		return
 	}
-	for _, child := range children{
-		if !(child == path){
+	for _, child := range children {
+		if !(child == path) {
 			slash := regexp.MustCompile("/")
 			matches := slash.FindAllStringIndex(child, -1)
 			//zfs command outputs all Children But that is a hassle to parse so ignore children of children here
 			//TODO Figure out if I want to switch this to nonrecursive. and if So How
-			if !(len(matches) > 1 ){
+			if !(len(matches) > 1 ) {
 				d.Children = append(d.Children, OpenDataset(child))
 			}
 		}
@@ -89,7 +89,7 @@ func OpenDataset(path string) (d Dataset){
 // some can be set only at creation time and some are read only.
 // Always check if returned error and its description.
 func (d *Dataset) SetProperty(prop string, value string) (err error) {
-	if _, err = zfsExec([]string{"set", fmt.Sprintf("%s=%s", prop, value), d.Path}); err != nil{
+	if _, err = zfsExec([]string{"set", fmt.Sprintf("%s=%s", prop, value), d.Path}); err != nil {
 		return
 	}
 	d.Properties[prop], err = d.GetProperty(prop)
@@ -125,7 +125,7 @@ func (d *Dataset) Rename(newName string, forceUnmount bool) (err error) {
 // sets in 'where' argument the current mountpoint, and returns true.  Otherwise,
 // returns false.
 func (d *Dataset) IsMounted() (mounted bool, where string) {
-	if d.Properties["mounted"].Value == "yes"{
+	if d.Properties["mounted"].Value == "yes" {
 		mounted = true
 		where = d.Properties["mountpoint"].Value
 	} else {
@@ -155,11 +155,11 @@ func (d *Dataset) Unmount() (err error) {
 // mountpoint property.
 func (d *Dataset) UnmountAll() (err error) {
 	for _, child := range d.Children {
-		if err = child.UnmountAll(); err != nil{
+		if err = child.UnmountAll(); err != nil {
 			return
 		}
 		if strings.Contains(child.Properties["mountpoint"].Source, "inherited") {
-			if err = child.Unmount(); err != nil{
+			if err = child.Unmount(); err != nil {
 				return
 			}
 		}

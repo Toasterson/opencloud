@@ -5,7 +5,6 @@ import (
 )
 
 const (
-
 	// name of the service
 	name        = "imaged"
 	description = "OpenCloud Image Service"
@@ -15,10 +14,9 @@ const (
 )
 
 type Imaged struct {
-
 }
 
-func (this *Imaged) List(pool string, reply *[]string) (err error){
+func (this *Imaged) List(pool string, reply *[]string) (err error) {
 	*reply, err = zfs.List(pool)
 	return err
 }

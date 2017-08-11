@@ -1,4 +1,5 @@
 package imaged
+
 /*
 import (
 	"github.com/takama/daemon"

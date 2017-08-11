@@ -6,7 +6,7 @@ import (
 	"github.com/toasterson/opencloud/zfs"
 )
 
-func OpenPool(name string) (p Pool){
+func OpenPool(name string) (p Pool) {
 	//TODO switch to use -Hp as this does not print first line
 	retVal, err := zpoolExec([]string{"get", "all", name})
 	if err != nil {
@@ -14,7 +14,7 @@ func OpenPool(name string) (p Pool){
 	}
 	p.Name = name
 	p.Properties = make(zfs.DatasetProperties)
-	for _, line := range retVal{
+	for _, line := range retVal {
 		propLine := strings.Fields(line)
 		propName := propLine[1]
 
@@ -29,13 +29,13 @@ func OpenPool(name string) (p Pool){
 	if err != nil {
 		return
 	}
-	for _, child := range children{
-		if !(child == name){
+	for _, child := range children {
+		if !(child == name) {
 			slash := regexp.MustCompile("/")
 			matches := slash.FindAllStringIndex(child, -1)
 			//zfs command outputs all Children But that is a hassle to parse so ignore children of children here
 			//TODO Figure out if I want to switch this to nonrecursive. and if So How
-			if !(len(matches) > 1 ){
+			if !(len(matches) > 1 ) {
 				p.Datasets = append(p.Datasets, zfs.OpenDataset(child))
 			}
 		}

@@ -8,7 +8,7 @@ import (
 )
 
 func HTTPDownload(url string, location string) (err error) {
-	if location == ""{
+	if location == "" {
 		location = "/tmp/"
 	}
 	client := grab.NewClient()

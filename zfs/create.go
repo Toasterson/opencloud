@@ -16,12 +16,11 @@ func CreateDataset(path string, dtype DatasetType, props map[string]string, crea
 	}
 	args = append(args, DatasetPropertyListToCMD(props)...)
 	args = append(args, path)
-	if _, err = zfsExec(args); err != nil{
-	return
+	if _, err = zfsExec(args); err != nil {
+		return
 	}
 	if !createOnly {
 		d = OpenDataset(path)
 	}
 	return
 }
-

@@ -12,19 +12,19 @@ import (
 
 // Pool - ZFS dataset object
 type Pool struct {
-	Name 	   string
+	Name       string
 	Properties zfs.DatasetProperties
 	Datasets   []zfs.Dataset
 }
 
-func zpoolExec(args []string) (retVal []string, err error){
+func zpoolExec(args []string) (retVal []string, err error) {
 	logger.Trace(fmt.Sprintf("zpool %s", args))
 	cmd := exec.Command("zpool", args...)
 	var out, serr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &serr
 
-	if err = cmd.Run(); err != nil{
+	if err = cmd.Run(); err != nil {
 		return []string{}, errors.New(strings.TrimSpace(serr.String()))
 	}
 	if out.Len() > 0 {
@@ -33,7 +33,7 @@ func zpoolExec(args []string) (retVal []string, err error){
 		//Do some trimming as there could be a empty line in there
 		for i, val := range retVal {
 			val = strings.TrimSpace(val)
-			if val == ""{
+			if val == "" {
 				retVal = append(retVal[:i], retVal[i+1:]...)
 			}
 		}

@@ -11,12 +11,12 @@ import (
 
 const (
 	lofiadm_bin string = "/usr/sbin/lofiadm"
-	mount_bin string = "/usr/sbin/mount"
+	mount_bin   string = "/usr/sbin/mount"
 )
 
 func MountLoopDevice(fstype string, mountpoint string, file string) error {
 	lofibuff, lofierr, err := lofiExec([]string{"-a", file})
-	if err != nil{
+	if err != nil {
 		if !strings.Contains(lofierr, "Device busy") {
 			return errors.New(strings.TrimSpace(lofierr))
 		}
@@ -30,7 +30,7 @@ func MountLoopDevice(fstype string, mountpoint string, file string) error {
 	logger.Trace(mount.Path, mount.Args)
 	mount.Stdout = &mountbuff
 	mount.Stderr = &mounterr
-	if err := mount.Run(); err != nil{
+	if err := mount.Run(); err != nil {
 		return errors.New(strings.TrimSpace(mounterr.String()))
 	}
 	return nil
@@ -38,7 +38,7 @@ func MountLoopDevice(fstype string, mountpoint string, file string) error {
 
 //TODO func IsMounted(device, path) bool
 
-func lofiExec(args []string) (out string, errout string, err error){
+func lofiExec(args []string) (out string, errout string, err error) {
 	lofiadm := exec.Command(lofiadm_bin, args...)
 	var lofibuff, lofierr bytes.Buffer
 	lofiadm.Stdout = &lofibuff

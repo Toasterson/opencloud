@@ -13,30 +13,30 @@ func List(zpool string) (datasets []string, err error) {
 	return datasets, err
 }
 
-func Size(dataset string) (size datasize.ByteSize, err error){
+func Size(dataset string) (size datasize.ByteSize, err error) {
 	return zfsListSomeSize(dataset, "referenced")
 }
 
-func Avail(dataset string) (size datasize.ByteSize, err error){
+func Avail(dataset string) (size datasize.ByteSize, err error) {
 	return zfsListSomeSize(dataset, "available")
 }
 
-func Used(dataset string) (size datasize.ByteSize, err error){
+func Used(dataset string) (size datasize.ByteSize, err error) {
 	return zfsListSomeSize(dataset, "usedbydataset")
 }
 
-func UsedIncludingChildren(dataset string) (size datasize.ByteSize, err error){
+func UsedIncludingChildren(dataset string) (size datasize.ByteSize, err error) {
 	return zfsListSomeSize(dataset, "used")
 }
 
-func zfsListSomeSize(dataset string, parameters ...string) (size datasize.ByteSize, err error){
+func zfsListSomeSize(dataset string, parameters ...string) (size datasize.ByteSize, err error) {
 	//TODO switch to use -Hp as this does not print first line
 	if dataset == "" {
 		return size, errors.New("Dataset is not allowed to be empty.")
 	}
 	zfs_args := []string{"-o"}
-	for i, param := range(parameters){
-		if i >= 1{
+	for i, param := range parameters {
+		if i >= 1 {
 			zfs_args = append(zfs_args, ","+param)
 		} else {
 			zfs_args = append(zfs_args, param)
@@ -50,21 +50,21 @@ func zfsListSomeSize(dataset string, parameters ...string) (size datasize.ByteSi
 	return convertToSize(datasetSize[0])
 }
 
-func zfsList(args []string) (retVal []string, err error){
+func zfsList(args []string) (retVal []string, err error) {
 	args = append([]string{"list"}, args...)
 	cmd := exec.Command("zfs", args...)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 
-	if err = cmd.Run(); err != nil{
+	if err = cmd.Run(); err != nil {
 		return retVal, err
 	}
 	retVal = strings.Split(out.String(), "\n")
 	retVal = retVal[1:]
 	//Do some trimming as there could be a empty line in there
-	for i, val := range(retVal){
+	for i, val := range retVal {
 		val = strings.TrimSpace(val)
-		if val == ""{
+		if val == "" {
 			retVal = append(retVal[:i], retVal[i+1:]...)
 		}
 	}

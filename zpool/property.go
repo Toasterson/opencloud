@@ -10,7 +10,7 @@ import (
 // some can be set only at creation time and some are read only.
 // Always check if returned error and its description.
 func (p *Pool) SetProperty(prop string, value string) (err error) {
-	if _, err = zpoolExec([]string{"set", fmt.Sprintf("%s=%s", prop, value), p.Name}); err != nil{
+	if _, err = zpoolExec([]string{"set", fmt.Sprintf("%s=%s", prop, value), p.Name}); err != nil {
 		return
 	}
 	p.Properties[prop], err = p.GetProperty(prop)

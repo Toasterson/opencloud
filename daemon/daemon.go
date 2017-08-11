@@ -13,13 +13,13 @@ import (
 
 type Server struct {
 	daemon.Daemon
-	Port string
-	Name string
+	Port        string
+	Name        string
 	Description string
 }
 
 // Manage by daemon commands or run the daemon
-func RunService(service Server, clientFn func() (string,error)) (string, error) {
+func RunService(service Server, clientFn func() (string, error)) (string, error) {
 
 	usage := "Usage: imaged install | remove | start | stop | status"
 
@@ -100,7 +100,7 @@ func acceptConnection(listener net.Listener, listen chan<- net.Conn) {
 }
 
 func handleClient(client net.Conn) {
-	common.Stdlog.Println("Got connection from: "+client.RemoteAddr().String())
+	common.Stdlog.Println("Got connection from: " + client.RemoteAddr().String())
 
 	// Close connection when this function ends
 	defer func() {
