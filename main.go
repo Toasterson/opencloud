@@ -33,8 +33,7 @@ func main() {
 	var confObj installd.InstallConfiguration
 	util.Must(json.Unmarshal(file, &confObj))
 	if confObj.MediaURL == "" {
-		confObj.MediaURL, err = devprop.GetValue("install_media")
-		util.Must(err)
+		confObj.MediaURL = devprop.GetValue("install_media")
 	}
 	if !*dryRun {
 		installd.Install(confObj)

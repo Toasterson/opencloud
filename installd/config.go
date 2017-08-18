@@ -9,6 +9,12 @@ const (
 	MediaTypeZImage     = "zimage"
 )
 
+const (
+	InstallTypeBootEnv	= "bootenv"
+	InstallTypeFullDisk = "fulldisk"
+	InstallTypeEFIFullDisk = "efifulldisk"
+)
+
 type InstallConfiguration struct {
 	InstallType         string `json:"install_type"`         //Possible options are efi, bootenv, fulldisk, efifulldisk
 	RootFSType          string `json:"root_fs_type"`         //ufs, zfs
