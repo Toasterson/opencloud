@@ -26,6 +26,7 @@ var defualtDirectories = []DirConfig{
 	{Name: "system/object", Mode: 555},
 	{Name: "system/boot", Mode: 555},
 	{Name: "proc", Mode: 555},
+	{Name: "opt", Group: "sys"},
 	{Name: "mnt", Group: "sys"},
 	{Name: "devices/", Group: "sys"},
 	{Name: "devices/pseudo", Group: "sys"},

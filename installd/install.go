@@ -39,11 +39,6 @@ func Install(conf InstallConfiguration) {
 	//Remove SMF Repository to force regeneration of SMF at first boot.
 	//TODO Make own smf package which is a bit more powerfull
 	os.Remove(fmt.Sprintf("/%s/etc/svc/repository.db", rootDir))
-	os.Remove(fmt.Sprintf("/%s/.textinstall", rootDir))
-	os.Remove(fmt.Sprintf("/%s/.cdrom", rootDir))
-	os.Remove(fmt.Sprintf("/%s/.volsetid", rootDir))
-	os.Remove(fmt.Sprintf("/%s/opt", rootDir))
-	os.Mkdir(fmt.Sprintf("/%s/opt", rootDir), os.ModeDir)
 	fixZfsMountPoints(&conf)
 }
 
@@ -92,5 +87,20 @@ func installOSFromMediaFiles(saveLocation string) {
 	os.Mkdir(altMountLocation, os.ModeDir)
 	util.Must(mount.MountLoopDevice("ufs", altMountLocation, fmt.Sprintf("%s/%s", saveLocation, solmediarootfileName)))
 	util.Must(mount.MountLoopDevice("hsfs", fmt.Sprintf("%s/usr", altMountLocation), fmt.Sprintf("%s/%s", saveLocation, solusrfileName)))
-	filepath.Walk(altMountLocation, walkCopy)
+	filelist := []string{
+		"bin",
+		"boot",
+		"kernel",
+		"lib",
+		"platform",
+		"root",
+		"sbin",
+		"usr",
+		"etc",
+		"var",
+		"zonelib",
+	}
+	for _, dir := range filelist {
+		filepath.Walk(fmt.Sprintf("%s/%s", altMountLocation, dir), walkCopy)
+	}
 }
