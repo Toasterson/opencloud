@@ -70,8 +70,9 @@ func CreateBootConfigurationFiles(rootDir string, conf BootConfig) (err error){
 	if err != nil {
 		return
 	}
-	if err = os.MkdirAll(fmt.Sprintf("%s/boot", conf.RPoolName), os.ModeDir); err != nil {
-		return err
+	//if err = os.Mkdir(fmt.Sprintf("%s/boot", conf.RPoolName), os.ModeDir); err != nil {
+	if err = os.Mkdir("/rpool/boot", os.ModeDir); err != nil {
+		return
 	}
 	confFile, err := os.Create(fmt.Sprintf(confLocation, conf.RPoolName))
 	if err != nil {
