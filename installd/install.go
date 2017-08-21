@@ -87,20 +87,5 @@ func installOSFromMediaFiles(saveLocation string) {
 	os.Mkdir(altMountLocation, os.ModeDir)
 	util.Must(mount.MountLoopDevice("ufs", altMountLocation, fmt.Sprintf("%s/%s", saveLocation, solmediarootfileName)))
 	util.Must(mount.MountLoopDevice("hsfs", fmt.Sprintf("%s/usr", altMountLocation), fmt.Sprintf("%s/%s", saveLocation, solusrfileName)))
-	filelist := []string{
-		"boot",
-		"kernel",
-		"lib",
-		"platform",
-		"root",
-		"sbin",
-		"usr",
-		"etc",
-		"var",
-		"opt",
-		"zonelib",
-	}
-	for _, dir := range filelist {
-		filepath.Walk(fmt.Sprintf("%s/%s", altMountLocation, dir), walkCopy)
-	}
+	filepath.Walk(altMountLocation, walkCopy)
 }
