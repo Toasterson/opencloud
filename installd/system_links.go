@@ -23,6 +23,7 @@ func MakeDeviceLinks(rootDir string, links []LinkConfig){
 	links = append(links, defaultLinks...)
 	for _, link := range links {
 		path := fmt.Sprintf("%s/dev/%s", rootDir, link.Name)
+		logger.Trace(fmt.Sprintf("Creating Special Link %s -> %s", path, link.Target))
 		err := os.Symlink(link.Target, path)
 		if err != nil{
 			logger.Error(err)

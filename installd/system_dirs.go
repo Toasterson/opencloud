@@ -48,6 +48,7 @@ func MakeSystemDirectories(rootDir string, dirs []DirConfig){
 	dirs = append(dirs, defualtDirectories...)
 	for _, dir := range dirs {
 		path := fmt.Sprintf("%s/%s", rootDir, dir.Name)
+		logger.Trace(fmt.Sprintf("Creating System Directory %s", path))
 		var uid, gid int
 		os.Mkdir(path, os.ModeDir)
 		if dir.Mode != 0 {
