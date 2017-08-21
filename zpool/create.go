@@ -1,9 +1,10 @@
 package zpool
 
 import (
-	"github.com/toasterson/opencloud/zfs"
-	"runtime"
 	"fmt"
+	"runtime"
+
+	"github.com/toasterson/opencloud/zfs"
 )
 
 // Create a new Zfs Pool on the Followin disks with mode

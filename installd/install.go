@@ -1,13 +1,15 @@
 package installd
 
 import (
-	"github.com/toasterson/mozaik/util"
-	"github.com/toasterson/opencloud/zfs"
 	"fmt"
-	"github.com/toasterson/opencloud/common"
-	"github.com/toasterson/opencloud/mount"
 	"os"
 	"path/filepath"
+
+	"github.com/toasterson/mozaik/util"
+	"github.com/toasterson/opencloud/bootadm"
+	"github.com/toasterson/opencloud/common"
+	"github.com/toasterson/opencloud/mount"
+	"github.com/toasterson/opencloud/zfs"
 )
 
 const altRootLocation string = "/a"
@@ -30,8 +32,11 @@ func Install(conf InstallConfiguration) {
 	MakeSystemDirectories(rootDir, []DirConfig{})
 	MakeDeviceLinks(rootDir, []LinkConfig{})
 	util.Must(CreateDeviceLinks(rootDir, []string{}))
-	
-	//fixZfsMountPoints(&conf)
+	bconf := bootadm.BootConfig{Type: bootadm.BootLoaderTypeLoader, RPoolName: conf.RPoolName, BEName: conf.BEName, BootOptions: []string{}}
+	util.Must(bootadm.CreateBootConfigurationFiles(rootDir, bconf))
+	util.Must(bootadm.UpdateBootArchive(rootDir))
+	util.Must(bootadm.InstallBootLoader(rootDir, conf.RPoolName))
+	fixZfsMountPoints(&conf)
 }
 
 func fixZfsMountPoints(conf *InstallConfiguration) {

@@ -1,12 +1,15 @@
+// +build solaris,cgo
+
 package installd
 
 import (
-	"os"
 	"fmt"
-	"syscall"
+	"os"
 	"os/user"
-	"github.com/toasterson/mozaik/logger"
 	"strconv"
+	"syscall"
+
+	"github.com/toasterson/mozaik/logger"
 )
 
 type DirConfig struct {
@@ -53,7 +56,7 @@ func MakeSystemDirectories(rootDir string, dirs []DirConfig){
 		if dir.Owner != "" {
 			owner, err := user.Lookup(dir.Owner)
 			if err != nil {
-				logger.Error(fmt.Sprintf("User %s does not exist this should not happen", owner.Name))
+				logger.Error(fmt.Sprintf("User %s does not exist this should not happen %s", dir.Owner, err))
 			} else {
 				uid, _ = strconv.Atoi(owner.Uid)
 			}
@@ -61,7 +64,7 @@ func MakeSystemDirectories(rootDir string, dirs []DirConfig){
 		if dir.Group != "" {
 			group, err := user.LookupGroup(dir.Group)
 			if err != nil {
-				logger.Error(fmt.Sprintf("User %s does not exist this should not happen", group.Name))
+				logger.Error(fmt.Sprintf("Group %s does not exist this should not happen: %s", dir.Group, err))
 			} else {
 				gid, _ = strconv.Atoi(group.Gid)
 			}

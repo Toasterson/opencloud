@@ -1,8 +1,9 @@
 package zpool
 
 import (
-	"strings"
 	"regexp"
+	"strings"
+
 	"github.com/toasterson/opencloud/zfs"
 )
 

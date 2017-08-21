@@ -1,12 +1,13 @@
 package zpool
 
 import (
-	"os/exec"
 	"bytes"
-	"strings"
 	"errors"
-	"github.com/toasterson/mozaik/logger"
 	"fmt"
+	"os/exec"
+	"strings"
+
+	"github.com/toasterson/mozaik/logger"
 	"github.com/toasterson/opencloud/zfs"
 )
 

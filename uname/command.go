@@ -1,8 +1,8 @@
 package uname
 
 import (
-	"os/exec"
 	"bytes"
+	"os/exec"
 	"strings"
 )
 

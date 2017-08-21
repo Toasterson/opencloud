@@ -1,10 +1,10 @@
 package common
 
 import (
-	"fmt"
-	"os"
-	"log"
 	"errors"
+	"fmt"
+	"log"
+	"os"
 )
 
 var Stdlog, Errlog *log.Logger

@@ -29,4 +29,5 @@ type InstallConfiguration struct {
 	BEName              string `json:"be_name"`              //Name of the new Boot Environment defaults to openindiana
 	SwapSize            string `json:"swap_size"`            //Size of the SWAP Partition defaults to 2g
 	DumpSize            string `json:"dump_size"`            //Size of the Dump Partition defaults to swap_size
+	BootLoader			string `json:"boot_loader"`			 //Valid values are Loader and Grub
 }

@@ -3,6 +3,7 @@ package zpool
 import (
 	"fmt"
 	"strings"
+
 	"github.com/toasterson/opencloud/zfs"
 )
 

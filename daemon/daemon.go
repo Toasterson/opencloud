@@ -1,13 +1,14 @@
 package daemon
 
 import (
-	"github.com/takama/daemon"
+	"fmt"
+	"net"
+	"net/rpc"
 	"os"
 	"os/signal"
 	"syscall"
-	"net"
-	"fmt"
-	"net/rpc"
+
+	"github.com/takama/daemon"
 	"github.com/toasterson/opencloud/common"
 )
 

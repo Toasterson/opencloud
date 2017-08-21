@@ -1,12 +1,12 @@
 package bootadm
 
 import (
-	"github.com/toasterson/opencloud/uname"
-	"github.com/toasterson/opencloud/installd"
-	"text/template"
-	"os"
-	"fmt"
 	"bytes"
+	"fmt"
+	"os"
+	"text/template"
+
+	"github.com/toasterson/opencloud/uname"
 )
 
 const (
@@ -14,12 +14,12 @@ const (
 	BootLoaderTypeGrub = 1
 )
 
+const loaderConfFile string = "/%s/boot/menu.lst"
+
 const loaderBootConfig string = `title {.BEName}
 bootfs {.RPoolName}/ROOT/{.BEName}`
 
-const loaderConfFile string = "/%s/boot/menu.lst"
-
-const grubConfig string = `default 0
+const grubBootConfig string = `default 0
 timeout 3
 title {.BEName}
 findroot (pool_{.RPoolName},0,a)
@@ -37,18 +37,28 @@ bootfs {.RPoolName}/ROOT/{.BEName}
 kernel$ /platform/i86pc/kernel/amd64/unix -B $ZFS-BOOTFS
 module$ /platform/i86pc/amd64/boot_archive`
 
+type loaderType int
 
-type bootLoaderType int
+type BootConfig struct {
+	Type loaderType
+	RPoolName string
+	BEName string
+	BootOptions []string //TODO Implement
+}
 
-func CreateBootConfiguration(loaderType bootLoaderType, rootDir string, bootOptions []string, conf *installd.InstallConfiguration) (err error){
+func CreateBootConfigurationFiles(rootDir string, conf BootConfig) (err error){
 	if rootDir == "" {
 		rootDir = "/"
 	}
+
 	hplatform := uname.GetHardwarePlatform()
 	config := loaderBootConfig
 	confLocation := loaderConfFile
-	if hplatform == uname.HardwarePlatformXen || loaderType == BootLoaderTypeGrub {
-		config = grubConfig
+	if hplatform == uname.HardwarePlatformXen {
+		config = xenBootConfig
+		confLocation = grubConfFile
+	} else if conf.Type == BootLoaderTypeGrub {
+		config = grubBootConfig
 		confLocation = grubConfFile
 	}
 	tmplConfig, err := template.New("BootConfig").Parse(config)
@@ -60,6 +70,7 @@ func CreateBootConfiguration(loaderType bootLoaderType, rootDir string, bootOpti
 	if err != nil {
 		return
 	}
+	os.MkdirAll(fmt.Sprintf("%s/boot", conf.RPoolName), os.ModeDir)
 	confFile, err := os.Create(fmt.Sprintf(confLocation, conf.RPoolName))
 	if err != nil {
 		return

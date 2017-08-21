@@ -1,8 +1,9 @@
 package installd
 
 import (
-	"os"
 	"fmt"
+	"os"
+
 	"github.com/toasterson/mozaik/logger"
 )
 

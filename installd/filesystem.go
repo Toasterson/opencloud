@@ -2,10 +2,11 @@ package installd
 
 import (
 	"fmt"
+
 	"github.com/satori/go.uuid"
-	"github.com/toasterson/opencloud/zpool"
-	"github.com/toasterson/opencloud/zfs"
 	"github.com/toasterson/mozaik/util"
+	"github.com/toasterson/opencloud/zfs"
+	"github.com/toasterson/opencloud/zpool"
 )
 
 func CreateAndMountZpool(conf *InstallConfiguration) (err error) {

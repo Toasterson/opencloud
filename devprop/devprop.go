@@ -1,8 +1,8 @@
 package devprop
 
 import (
-	"os/exec"
 	"bytes"
+	"os/exec"
 )
 
 const devprop_bin string = "/sbin/devprop"

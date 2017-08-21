@@ -1,9 +1,10 @@
 package zfs
 
 import (
-	"strings"
 	"fmt"
 	"regexp"
+	"strings"
+
 	"github.com/c2h5oh/datasize"
 )
 

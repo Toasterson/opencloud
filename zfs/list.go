@@ -1,11 +1,12 @@
 package zfs
 
 import (
-	"os/exec"
 	"bytes"
-	"strings"
-	"github.com/c2h5oh/datasize"
 	"errors"
+	"os/exec"
+	"strings"
+
+	"github.com/c2h5oh/datasize"
 )
 
 func List(zpool string) (datasets []string, err error) {

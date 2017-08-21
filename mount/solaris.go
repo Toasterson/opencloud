@@ -1,11 +1,15 @@
+// +build solaris
+
 package mount
 
 import (
-	"os/exec"
 	"bytes"
 	"fmt"
+	"os/exec"
 	"strings"
+
 	"errors"
+
 	"github.com/toasterson/mozaik/logger"
 )
 

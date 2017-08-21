@@ -1,12 +1,13 @@
 package installd
 
 import (
-	"os"
-	"strings"
-	"github.com/toasterson/mozaik/logger"
 	"fmt"
 	"io"
+	"os"
+	"strings"
 	"syscall"
+
+	"github.com/toasterson/mozaik/logger"
 	"github.com/toasterson/mozaik/util"
 )
 

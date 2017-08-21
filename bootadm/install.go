@@ -7,19 +7,17 @@ import (
 const bootadm_bin = "/sbin/bootadm"
 
 func InstallBootLoader(rootDir string, pool string) error {
-	args := []string{}
+	args := []string{"install-bootloader"}
 	if rootDir != "" {
 		args = append(args, "-R", rootDir)
 	}
 	if pool != "" {
 		args = append(args, "-P", pool)
 	}
-	return execBootadmInstall(args)
+	return execBootadm(args)
 }
 
-func execBootadmInstall(args []string) error {
-	realArgs := []string{"install-bootloader"}
-	realArgs = append(realArgs, args...)
-	bootadm := exec.Command(bootadm_bin, realArgs...)
+func execBootadm(args []string) error {
+	bootadm := exec.Command(bootadm_bin, args...)
 	return bootadm.Run()
 }

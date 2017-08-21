@@ -12,5 +12,6 @@
     "/export": "rpool/export",
     "/export/home": "rpool/export/home"
   },
-  "pool_type": "normal"
+  "pool_type": "normal",
+  "boot_loader": "loader"
 }

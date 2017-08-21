@@ -3,6 +3,7 @@ package installd
 import (
 	"fmt"
 	"time"
+
 	"github.com/cavaliercoder/grab"
 	"github.com/toasterson/mozaik/logger"
 )

@@ -1,8 +1,8 @@
 package imaged
 
 import (
-	"net/rpc"
 	"fmt"
+	"net/rpc"
 )
 
 func client() (string, error) {

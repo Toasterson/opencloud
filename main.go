@@ -1,13 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
+	"io/ioutil"
+
+	"github.com/toasterson/mozaik/logger"
+	"github.com/toasterson/mozaik/util"
 	"github.com/toasterson/opencloud/devprop"
 	"github.com/toasterson/opencloud/installd"
-	"encoding/json"
-	"github.com/toasterson/mozaik/util"
-	"github.com/toasterson/mozaik/logger"
-	"io/ioutil"
 )
 
 func main() {

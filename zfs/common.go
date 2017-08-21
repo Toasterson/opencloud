@@ -1,13 +1,14 @@
 package zfs
 
 import (
-	"github.com/c2h5oh/datasize"
-	"strings"
-	"strconv"
-	"fmt"
-	"os/exec"
 	"bytes"
 	"errors"
+	"fmt"
+	"os/exec"
+	"strconv"
+	"strings"
+
+	"github.com/c2h5oh/datasize"
 	"github.com/toasterson/mozaik/logger"
 )
 
