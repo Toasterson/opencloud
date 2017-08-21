@@ -38,7 +38,12 @@ func Install(conf InstallConfiguration) {
 	util.Must(bootadm.InstallBootLoader(rootDir, conf.RPoolName))
 	//Remove SMF Repository to force regeneration of SMF at first boot.
 	//TODO Make own smf package which is a bit more powerfull
-	util.Must(os.Remove(fmt.Sprintf("/%s/etc/svc/repository.db", rootDir)))
+	os.Remove(fmt.Sprintf("/%s/etc/svc/repository.db", rootDir))
+	os.Remove(fmt.Sprintf("/%s/.textinstall", rootDir))
+	os.Remove(fmt.Sprintf("/%s/.cdrom", rootDir))
+	os.Remove(fmt.Sprintf("/%s/.volsetid", rootDir))
+	os.Remove(fmt.Sprintf("/%s/opt", rootDir))
+	os.Mkdir(fmt.Sprintf("/%s/opt", rootDir), os.ModeDir)
 	fixZfsMountPoints(&conf)
 }
 
