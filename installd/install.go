@@ -36,6 +36,9 @@ func Install(conf InstallConfiguration) {
 	util.Must(bootadm.CreateBootConfigurationFiles(rootDir, bconf))
 	util.Must(bootadm.UpdateBootArchive(rootDir))
 	util.Must(bootadm.InstallBootLoader(rootDir, conf.RPoolName))
+	//Remove SMF Repository to force regeneration of SMF at first boot.
+	//TODO Make own smf package which is a bit more powerfull
+	util.Must(os.Remove(fmt.Sprintf("/%s/ROOT/%s/etc/svc/repository.db", conf.RPoolName, conf.BEName)))
 	fixZfsMountPoints(&conf)
 }
 
