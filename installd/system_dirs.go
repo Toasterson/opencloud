@@ -51,7 +51,7 @@ func MakeSystemDirectories(rootDir string, dirs []DirConfig){
 		path := fmt.Sprintf("%s/%s", rootDir, dir.Name)
 		logger.Trace(fmt.Sprintf("Creating System Directory %s", path))
 		var uid, gid int
-		os.Mkdir(path, os.ModeDir)
+		os.Mkdir(path, 0755)
 		if dir.Mode != 0 {
 			syscall.Chmod(path, uint32(dir.Mode))
 		}

@@ -22,6 +22,9 @@ func walkCopy(path string, info os.FileInfo, err error) error {
 	if info.IsDir() {
 		logger.Trace(fmt.Sprintf("Mkdir %s", dstpath))
 		util.Must(os.Mkdir(dstpath, info.Mode()))
+		srcStat := info.Sys().(*syscall.Stat_t)
+		util.Must(syscall.Chmod(dstpath, srcStat.Mode))
+		util.Must(syscall.Chown(dstpath, int(srcStat.Uid), int(srcStat.Gid)))
 	} else if lsrcinfo.Mode()&os.ModeSymlink != 0 {
 		//We have a Symlink thus Create it on the Target
 		dstTarget, _ := os.Readlink(path)
