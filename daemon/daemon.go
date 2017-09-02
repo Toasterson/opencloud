@@ -22,7 +22,7 @@ type Server struct {
 // Manage by daemon commands or run the daemon
 func RunService(service Server, clientFn func() (string, error)) (string, error) {
 
-	usage := "Usage: imaged install | remove | start | stop | status"
+	usage := fmt.Sprintf("Usage: %s install | remove | start | stop | status", service.Name)
 
 	// if received any kind of command, do it
 	if len(os.Args) > 1 {

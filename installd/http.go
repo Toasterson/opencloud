@@ -12,12 +12,24 @@ func HTTPDownload(url string, location string) (err error) {
 	if location == "" {
 		location = "/tmp/"
 	}
-	client := grab.NewClient()
 	req, _ := grab.NewRequest(location, url)
+	return doDownload(req).Err()
+}
 
+func HTTPDownloadTo(url string, location string) (file string, err error){
+	if location == "" {
+		location = "/tmp/"
+	}
+	req, _ := grab.NewRequest(location, url)
+	resp := doDownload(req)
+	return resp.Filename, resp.Err()
+}
+
+func doDownload(request *grab.Request) (resp *grab.Response){
+	client := grab.NewClient()
 	// start download
-	logger.Info(fmt.Sprintf("Downloading %v...", req.URL()))
-	resp := client.Do(req)
+	logger.Info(fmt.Sprintf("Downloading %v...", request.URL()))
+	resp = client.Do(request)
 
 	// start UI loop
 	t := time.NewTicker(500 * time.Millisecond)
@@ -36,12 +48,6 @@ ProgressLoop:
 			// download is complete
 			break ProgressLoop
 		}
-	}
-
-	// check for errors
-	if err := resp.Err(); err != nil {
-		logger.Critical(fmt.Sprintf("Download failed: %v", err))
-		return err
 	}
 
 	logger.Info(fmt.Sprintf("Download saved to %v", resp.Filename))
