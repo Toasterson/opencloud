@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"github.com/toasterson/uxfiletool"
+	"path/filepath"
 )
 
 func main() {
-	err := uxfiletool.ExactCopy("/usr/share/locale/en/LC_MESSAGES/dino.mo", "/tmp/installd")
-	fmt.Println(err)
+	found, _ := filepath.Glob("/usr/share/locale/en/*/*")
+	fmt.Printf("%v", found)
 }

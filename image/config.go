@@ -77,7 +77,16 @@ func (c Config)GetFiles(sections []string) []string{
 				} else {
 					found, err := filepath.Glob(path)
 					if err == nil && found != nil {
-						files = append(files, found...)
+						for _, foundp := range found{
+							foundStat, err := os.Stat(foundp)
+							if err != nil {
+								continue
+							}
+							if foundStat.Mode().IsDir(){
+								continue
+							}
+							files = append(files, foundp)
+						}
 					}
 				}
 			} else if !strings.Contains(path, "/"){
