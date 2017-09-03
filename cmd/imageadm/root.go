@@ -54,5 +54,5 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	RootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", image.Default_path, "config file ")
-	buildCmd.PersistentFlags().StringVarP(&profile, "profile", "p", "./profile.json", "The Profile file to use. Defaults to profile.json in pwd")
+	RootCmd.PersistentFlags().StringVarP(&profile, "profile", "p", "./profile.json", "The Profile file to use. Defaults to profile.json in pwd")
 }

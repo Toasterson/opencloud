@@ -26,7 +26,7 @@ var resolveCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(resolveCmd)
 
-	buildCmd.Flags().BoolVarP(&resolve_save, "save", "s", false, "If the Profile should be Updated with the new files")
+	resolveCmd.Flags().BoolVarP(&resolve_save, "save", "s", false, "If the Profile should be Updated with the new files")
 
 	// Here you will define your flags and configuration settings.
 
