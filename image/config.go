@@ -5,12 +5,11 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"path/filepath"
-
 	"os"
 
 	"github.com/toasterson/opencloud/common"
 	"github.com/toasterson/opencloud/ldd"
+	"github.com/toasterson/uxfiletool"
 )
 
 var Default_path string = "/etc/imagedefs.json"
@@ -77,57 +76,37 @@ func (c Config)GetFiles(sections []string) []string{
 		paths := c.GetAllFromSection(&sectionObj, "paths")
 		for _, path := range paths{
 			if strings.Contains(path, "*") {
-				if !strings.Contains(path, "/"){
-					libs := ldd.FindLibraries(path)
-					if libs != nil {
-						files = append(files, libs...)
-					}
-				} else {
-					found, err := filepath.Glob(path)
-					if err == nil && found != nil {
-						for _, foundp := range found{
-							foundStat, err := os.Stat(foundp)
-							if err != nil {
-								continue
-							}
-							if foundStat.Mode().IsDir(){
-								tmp_transportvar_walkDir = []string{}
-								filepath.Walk(foundp, walkIntoTmpVar)
-								files = append(files, tmp_transportvar_walkDir...)
-								tmp_transportvar_walkDir = []string{}
-								continue
-							}
-							files = append(files, foundp)
-						}
-					}
-				}
-			} else if !strings.Contains(path, "/"){
-				if strings.Contains(path, "lib"){
-					files = append(files, ldd.FindLibrary(path))
-				} else {
-					files = append(files, ldd.FindBinary(path))
-				}
-			} else {
+				//Lets assume we have a Pattern to resolve
+				files = append(files, uxfiletool.FindByGlob(path)...)
+			} else if strings.Contains(path, "/"){
+				//A / in the path means the path needs to be full, thus add it if its a file and add dir contents
 				pStat, err := os.Stat(path)
 				if err != nil {
 					continue
 				}
 				if pStat.Mode().IsDir(){
-					tmp_transportvar_walkDir = []string{}
-					filepath.Walk(path, walkIntoTmpVar)
-					files = append(files, tmp_transportvar_walkDir...)
-					tmp_transportvar_walkDir = []string{}
-					continue
+					files = append(files, uxfiletool.FindAllIn(path, uxfiletool.FindTypeDir)...)
+					files = append(files, uxfiletool.FindAllIn(path, uxfiletool.FindTypeLink)...)
+				} else {
+					files = append(files, path)
 				}
-				files = append(files, path)
+			} else {
+				//Lastly assume be will find that binary/lib in PATH
+				if strings.Contains(path, "lib"){
+					files = append(files, uxfiletool.FindLib(path)...)
+				} else {
+					files = append(files, uxfiletool.FindInPath(path)...)
+				}
 			}
 		}
+		//After we have resolved all the relativity lets grab the shared libs of the files
 		for _, file := range files {
 			if ldd.IsExecutableBinary(file){
 				files = append(files, ldd.GetSharedLibraries(file, []string{})...)
 			}
 		}
 	}
+	//After all the filling we will have duplicates and empty entries
 	common.RemoveDuplicates(&files)
 	common.RemoveEmpties(&files)
 	return files
