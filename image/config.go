@@ -14,12 +14,20 @@ import (
 )
 
 var Default_path string = "/etc/imagedefs.json"
+var tmp_transportvar_walkDir = []string{}
 //var Default_path string = "$HOME/.config/imagedefs.json"
 
 func init() {
 	if strings.Contains(Default_path, "$"){
 		Default_path = os.ExpandEnv(Default_path)
 	}
+}
+
+func walkIntoTmpVar(path string, info os.FileInfo, err error) error{
+	if !info.IsDir(){
+		tmp_transportvar_walkDir = append(tmp_transportvar_walkDir, path)
+	}
+	return nil
 }
 
 type Config struct {
@@ -83,6 +91,10 @@ func (c Config)GetFiles(sections []string) []string{
 								continue
 							}
 							if foundStat.Mode().IsDir(){
+								tmp_transportvar_walkDir = []string{}
+								filepath.Walk(foundp, walkIntoTmpVar)
+								files = append(files, tmp_transportvar_walkDir...)
+								tmp_transportvar_walkDir = []string{}
 								continue
 							}
 							files = append(files, foundp)
