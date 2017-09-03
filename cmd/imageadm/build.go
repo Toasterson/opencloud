@@ -85,7 +85,7 @@ func runBuild(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 	if err != nil {
-		fmt.Printf("Image Creation Failed: %s", err)
+		fmt.Printf("Image Creation Failed: %s\n", err)
 		os.Exit(1)
 	}
 }
