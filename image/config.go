@@ -108,6 +108,17 @@ func (c Config)GetFiles(sections []string) []string{
 					files = append(files, ldd.FindBinary(path))
 				}
 			} else {
+				pStat, err := os.Stat(path)
+				if err != nil {
+					continue
+				}
+				if pStat.Mode().IsDir(){
+					tmp_transportvar_walkDir = []string{}
+					filepath.Walk(path, walkIntoTmpVar)
+					files = append(files, tmp_transportvar_walkDir...)
+					tmp_transportvar_walkDir = []string{}
+					continue
+				}
 				files = append(files, path)
 			}
 		}
