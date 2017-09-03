@@ -22,7 +22,10 @@ import (
 	"github.com/toasterson/opencloud/image"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	profile          string
+)
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -50,5 +53,6 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", image.Default_path, fmt.Sprintf("config file (default is %s)", image.Default_path))
+	RootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", image.Default_path, "config file ")
+	buildCmd.PersistentFlags().StringVarP(&profile, "profile", "p", "./profile.json", "The Profile file to use. Defaults to profile.json in pwd")
 }

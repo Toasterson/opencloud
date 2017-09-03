@@ -12,7 +12,6 @@ import (
 
 var (
 	resolve_save    bool
-	resolve_profile string
 )
 
 // buildCmd represents the create command
@@ -28,7 +27,6 @@ func init() {
 	RootCmd.AddCommand(resolveCmd)
 
 	buildCmd.Flags().BoolVarP(&resolve_save, "save", "s", false, "If the Profile should be Updated with the new files")
-	buildCmd.Flags().StringVarP(&resolve_profile, "profile", "p", "./profile.json", "The Profile file to use. Defaults to profile.json in pwd")
 
 	// Here you will define your flags and configuration settings.
 
@@ -42,9 +40,9 @@ func init() {
 }
 
 func runResolve(cmd *cobra.Command, args []string) {
-	profilePath, err := filepath.Abs(resolve_profile)
+	profilePath, err := filepath.Abs(profile)
 	if err != nil {
-		fmt.Printf("Cannot resolve absolute path of %s: %s", resolve_profile, err)
+		fmt.Printf("Cannot resolve absolute path of %s: %s", profile, err)
 		os.Exit(1)
 	}
 	profile, err := image.LoadProfile(profilePath)

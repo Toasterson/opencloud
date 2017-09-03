@@ -14,7 +14,6 @@ var (
 	build_type       string
 	build_notresolve bool
 	build_output     string
-	build_profile    string
 )
 
 const build_default_baseDir string = "/tmp"
@@ -34,7 +33,6 @@ func init() {
 	buildCmd.Flags().StringVarP(&build_type, "type", "t", "", "use to overwrite the type of image to build")
 	buildCmd.Flags().BoolVarP(&build_notresolve, "notresolve", "n", false, "Use files in profile and not resolve from Filesystem")
 	buildCmd.Flags().StringVarP(&build_output, "output", "o", build_default_baseDir, "The Directory where a build will be saved to. defaults to /tmp/imgname")
-	buildCmd.Flags().StringVarP(&build_profile, "profile", "p", "./profile.json", "The Profile file to use. Defaults to profile.json in pwd")
 
 	// Here you will define your flags and configuration settings.
 
@@ -48,9 +46,9 @@ func init() {
 }
 
 func runBuild(cmd *cobra.Command, args []string) {
-	profilePath, err := filepath.Abs(build_profile)
+	profilePath, err := filepath.Abs(profile)
 	if err != nil {
-		fmt.Printf("Cannot resolve absolute path of %s: %s", build_profile, err)
+		fmt.Printf("Cannot resolve absolute path of %s: %s", profile, err)
 		os.Exit(1)
 	}
 	profile, err := image.LoadProfile(profilePath)
