@@ -85,7 +85,7 @@ func (c Config)GetFiles(sections []string) []string{
 					continue
 				}
 				if pStat.Mode().IsDir(){
-					files = append(files, uxfiletool.FindAllIn(path, uxfiletool.FindTypeDir)...)
+					files = append(files, uxfiletool.FindAllIn(path, uxfiletool.FindTypeFile)...)
 					files = append(files, uxfiletool.FindAllIn(path, uxfiletool.FindTypeLink)...)
 				} else {
 					files = append(files, path)
