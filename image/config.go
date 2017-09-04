@@ -7,6 +7,7 @@ import (
 
 	"os"
 
+	"github.com/toasterson/glog"
 	"github.com/toasterson/opencloud/common"
 	"github.com/toasterson/opencloud/ldd"
 	"github.com/toasterson/uxfiletool"
@@ -73,36 +74,56 @@ func (c Config)GetFiles(sections []string) []string{
 	files := []string{}
 	for _, section := range sections{
 		sectionObj := c.Sections[section]
+		glog.Debugf("Getting Files for %s", sectionObj.Name)
 		paths := c.GetAllFromSection(&sectionObj, "paths")
+		glog.Tracef("Found %v", paths)
 		for _, path := range paths{
 			if strings.Contains(path, "*") {
 				//Lets assume we have a Pattern to resolve
-				files = append(files, uxfiletool.FindByGlob(path)...)
+				glog.Debugf("%s needs globbing", path)
+				found := uxfiletool.FindByGlob(path)
+				glog.Tracef("Found %v", found)
+				files = append(files, found...)
 			} else if strings.Contains(path, "/"){
 				//A / in the path means the path needs to be full, thus add it if its a file and add dir contents
 				pStat, err := os.Stat(path)
 				if err != nil {
+					glog.Warnf("%s can not be read ignoring", path)
 					continue
 				}
 				if pStat.Mode().IsDir(){
-					files = append(files, uxfiletool.FindAllIn(path, uxfiletool.FindTypeFile)...)
-					files = append(files, uxfiletool.FindAllIn(path, uxfiletool.FindTypeLink)...)
+					glog.Debugf("%s is a directory getting Files", path)
+					foundfiles := uxfiletool.FindAllIn(path, uxfiletool.FindTypeFile)
+					glog.Tracef("Found files: %v", foundfiles)
+					foundlinks := uxfiletool.FindAllIn(path, uxfiletool.FindTypeLink)
+					glog.Tracef("Found links: %v", foundlinks)
+					files = append(files, foundfiles...)
+					files = append(files, foundlinks...)
 				} else {
+					glog.Debugf("%s is a File", path)
 					files = append(files, path)
 				}
 			} else {
 				//Lastly assume be will find that binary/lib in PATH
+				glog.Debugf("Assuming you want me to resolve %s in Path", path)
 				if strings.Contains(path, "lib"){
-					files = append(files, uxfiletool.FindLib(path)...)
+					libs := uxfiletool.FindLib(path)
+					glog.Tracef("Found: %v libs", libs)
+					files = append(files, libs...)
 				} else {
-					files = append(files, uxfiletool.FindInPath(path)...)
+					bins := uxfiletool.FindInPath(path)
+					glog.Tracef("Found the following Binaries %v", bins)
+					files = append(files, bins...)
 				}
 			}
 		}
 		//After we have resolved all the relativity lets grab the shared libs of the files
 		for _, file := range files {
 			if ldd.IsExecutableBinary(file){
-				files = append(files, ldd.GetSharedLibraries(file, []string{})...)
+				glog.Debugf("Getting shared libs of: %s", file)
+				libs := ldd.GetSharedLibraries(file, []string{})
+				glog.Tracef("Found: %v", libs)
+				files = append(files, libs...)
 			}
 		}
 	}

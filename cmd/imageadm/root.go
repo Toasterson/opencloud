@@ -19,12 +19,15 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/toasterson/glog"
 	"github.com/toasterson/opencloud/image"
 )
 
 var (
 	cfgFile string
 	profile          string
+	loglevel string
+	debug bool
 )
 
 // RootCmd represents the base command when called without any subcommands
@@ -37,6 +40,7 @@ var RootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
+	PersistentPreRun: initLogLevel,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -48,11 +52,21 @@ func Execute() {
 	}
 }
 
-func init() {
+func initLogLevel(cmd *cobra.Command, args []string){
+	if loglevel != "" {
+		glog.SetLevelFromString(loglevel)
+	}
+	if debug {
+		glog.SetLevel(glog.LOG_DEBUG)
+	}
+}
 
+func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	RootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", image.Default_path, "config file ")
 	RootCmd.PersistentFlags().StringVarP(&profile, "profile", "p", "./profile.json", "The Profile file to use. Defaults to profile.json in pwd")
+	RootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "Enable Debuging")
+	RootCmd.PersistentFlags().StringVar(&loglevel, "loglevel", "", "Set the Log Level")
 }

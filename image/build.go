@@ -9,13 +9,17 @@ import (
 
 	"github.com/appc/spec/aci"
 	"github.com/pkg/errors"
+	"github.com/toasterson/glog"
 	"github.com/toasterson/uxfiletool"
 )
 
 func BuildChroot(imageProfile *Profile, target string) error {
 	for _, file := range imageProfile.Files {
+		glog.Debugf("Copying: %s", file)
 		if err := uxfiletool.ExactCopy(file, target); err != nil {
+			glog.Tracef("Error Encountered: %s", err)
 			if !os.IsNotExist(err){
+				glog.Errf("Error: %s", err)
 				return err
 			}
 		}
