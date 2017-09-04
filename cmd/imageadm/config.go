@@ -41,11 +41,21 @@ func configCmdrun(cmd *cobra.Command, args []string) {
 		if section.Comment != ""{
 			fmt.Println(section.Comment)
 		}
-		fmt.Printf("Paths: %v\n", section.Paths)
-		fmt.Printf("Dependencies: %v\n", section.Dependencies)
-		fmt.Printf("Users: %v\n", section.Users)
-		fmt.Printf("Groups: %v\n", section.Groups)
-		fmt.Printf("Devices: %v\n", section.Devices)
+		if len(section.Paths) > 0 {
+			fmt.Printf("Paths: %v\n", section.Paths)
+		}
+		if len(section.Dependencies) > 0 {
+			fmt.Printf("Dependencies: %v\n", section.Dependencies)
+		}
+		if len(section.Users) > 0 {
+			fmt.Printf("Users: %v\n", section.Users)
+		}
+		if len(section.Groups) > 0 {
+			fmt.Printf("Groups: %v\n", section.Groups)
+		}
+		if len(section.Devices) > 0 {
+			fmt.Printf("Devices: %v\n", section.Devices)
+		}
 		fmt.Println()
 	}
 }
