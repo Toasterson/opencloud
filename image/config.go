@@ -86,7 +86,7 @@ func (c Config)GetFiles(sections []string) []string{
 				files = append(files, found...)
 			} else if strings.Contains(path, "/"){
 				//A / in the path means the path needs to be full, thus add it if its a file and add dir contents
-				pStat, err := os.Stat(path)
+				pStat, err := os.Lstat(path)
 				if err != nil {
 					glog.Warnf("%s can not be read ignoring", path)
 					continue
@@ -117,14 +117,16 @@ func (c Config)GetFiles(sections []string) []string{
 				}
 			}
 		}
-		//After we have resolved all the relativity lets grab the shared libs of the files
-		for _, file := range files {
-			if ldd.IsExecutableBinary(file){
-				glog.Debugf("Getting shared libs of: %s", file)
-				libs := ldd.GetSharedLibraries(file, []string{})
-				glog.Tracef("Found: %v", libs)
-				files = append(files, libs...)
-			}
+	}
+	common.RemoveDuplicates(&files)
+	common.RemoveEmpties(&files)
+	//After we have resolved all the relativity lets grab the shared libs of the files
+	for _, file := range files {
+		if ldd.IsExecutableBinary(file){
+			glog.Debugf("Getting shared libs of: %s", file)
+			libs := ldd.GetSharedLibraries(file, []string{})
+			glog.Tracef("Found: %v", libs)
+			files = append(files, libs...)
 		}
 	}
 	//After all the filling we will have duplicates and empty entries
