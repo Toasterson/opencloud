@@ -32,7 +32,7 @@ func init() {
 	RootCmd.AddCommand(createCmd)
 
 	createCmd.Flags().StringVarP(&imgtype,"type", "t", "chroot", "Set this to Chroot, ZFS or UFS to specify which image to be created.")
-	createCmd.Flags().StringVarP(&imgdir,"dir", "d", ".", "Which directory to create the image in defaults to ")
+	createCmd.Flags().StringVarP(&imgdir,"dir", "D", ".", "Which directory to create the image in defaults to ")
 	createCmd.Flags().StringArrayVarP(&sets, "set", "s", []string{}, "Which Filesets to include in the final Image. use config to show the sets")
 	createCmd.Flags().BoolVarP(&notresolve, "resolve", "n", false, "If the Files should be resolved from the sets. Defaults to true")
 
