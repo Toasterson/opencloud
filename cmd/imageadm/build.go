@@ -61,7 +61,7 @@ func runBuild(cmd *cobra.Command, args []string) {
 		fmt.Printf("Cannot Load Configuration: %s", err)
 		os.Exit(1)
 	}
-	if !notresolve {
+	if !build_notresolve {
 		profile.Files = config.GetFiles(profile.FileSets)
 	}
 	if build_type == "" {
